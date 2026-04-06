@@ -6,9 +6,9 @@ import { useProjectsStore } from "@/stores/projects-store";
 import { useAppStore } from "@/stores/app-store";
 
 const STYLE_OPTIONS = [
-  { value: "Photographic", label: "写实摄影" },
-  { value: "Anime", label: "动漫风格" },
-  { value: "3D Animation", label: "3D 动画" },
+  { value: "Photographic", label: "Ảnh chân thực" },
+  { value: "Anime", label: "Phong cách anime" },
+  { value: "3D Animation", label: "Hoạt hình 3D" },
 ] as const;
 
 export function CreateProjectModal() {
@@ -46,7 +46,7 @@ export function CreateProjectModal() {
     e.preventDefault();
 
     if (!title.trim()) {
-      setTitleError("项目标题不能为空");
+      setTitleError("Tiêu đề dự án không được để trống");
       return;
     }
 
@@ -62,7 +62,7 @@ export function CreateProjectModal() {
         } catch {
           // 风格图上传失败不阻塞项目创建
           useAppStore.getState().pushToast(
-            "风格参考图上传失败，可稍后在项目设置中重新上传",
+            "Tải ảnh tham chiếu phong cách thất bại, bạn có thể tải lại trong phần cài đặt dự án",
             "warning"
           );
         }
@@ -72,7 +72,7 @@ export function CreateProjectModal() {
       navigate(`/app/projects/${projectName}`);
     } catch (err) {
       useAppStore.getState().pushToast(
-        `创建项目失败: ${(err as Error).message}`,
+        `Tạo dự án thất bại: ${(err as Error).message}`,
         "error"
       );
     } finally {
@@ -85,7 +85,7 @@ export function CreateProjectModal() {
       <div className="w-full max-w-md rounded-xl border border-gray-700 bg-gray-900 p-6 shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-lg font-semibold text-gray-100">新建项目</h2>
+          <h2 className="text-lg font-semibold text-gray-100">Tạo dự án mới</h2>
           <button
             type="button"
             onClick={() => setShowCreateModal(false)}
@@ -99,7 +99,7 @@ export function CreateProjectModal() {
           {/* Title */}
           <div>
             <label className="block text-sm font-medium text-gray-400 mb-1">
-              项目标题 <span className="text-red-400">*</span>
+              Tiêu đề dự án <span className="text-red-400">*</span>
             </label>
             <input
               type="text"
@@ -108,21 +108,21 @@ export function CreateProjectModal() {
                 setTitle(e.target.value);
                 setTitleError("");
               }}
-              placeholder="例如：重生之皇后威武"
+              placeholder="Ví dụ: Hoàng hậu tái sinh uy vũ"
               className="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-gray-200 placeholder-gray-500 outline-none focus:border-indigo-500"
             />
             {titleError && (
               <p className="mt-1 text-xs text-red-400">{titleError}</p>
             )}
             <p className="mt-1 text-xs text-gray-600">
-              系统会自动生成内部项目标识并用于 URL 与文件存储
+              Hệ thống sẽ tự tạo mã dự án nội bộ để dùng cho URL và lưu trữ tệp
             </p>
           </div>
 
           {/* Content Mode */}
           <div>
             <label className="block text-sm font-medium text-gray-400 mb-1">
-              内容模式
+              Chế độ nội dung
             </label>
             <div className="flex gap-3">
               <label className={`flex-1 cursor-pointer rounded-lg border px-3 py-2 text-center text-sm transition-colors ${
@@ -138,7 +138,7 @@ export function CreateProjectModal() {
                   onChange={() => setContentMode("narration")}
                   className="sr-only"
                 />
-                说书+画面
+                Kể chuyện + hình ảnh
               </label>
               <label className={`flex-1 cursor-pointer rounded-lg border px-3 py-2 text-center text-sm transition-colors ${
                 contentMode === "drama"
@@ -153,7 +153,7 @@ export function CreateProjectModal() {
                   onChange={() => setContentMode("drama")}
                   className="sr-only"
                 />
-                剧集动画
+                Hoạt hình theo tập
               </label>
             </div>
           </div>
@@ -161,7 +161,7 @@ export function CreateProjectModal() {
           {/* Style — fixed radio options */}
           <div>
             <label className="block text-sm font-medium text-gray-400 mb-1">
-              视觉风格
+              Phong cách hình ảnh
             </label>
             <div className="flex gap-2">
               {STYLE_OPTIONS.map((opt) => (
@@ -190,13 +190,13 @@ export function CreateProjectModal() {
           {/* Style reference image */}
           <div>
             <label className="block text-sm font-medium text-gray-400 mb-1">
-              风格参考图 <span className="text-xs text-gray-600 font-normal">（可选）</span>
+              Ảnh tham chiếu phong cách <span className="text-xs text-gray-600 font-normal">(tùy chọn)</span>
             </label>
             {styleImagePreview ? (
               <div className="relative rounded-lg border border-gray-700 overflow-hidden">
                 <img
                   src={styleImagePreview}
-                  alt="风格参考图预览"
+                  alt="Xem trước ảnh tham chiếu phong cách"
                   className="w-full h-32 object-cover"
                 />
                 <button
@@ -214,7 +214,7 @@ export function CreateProjectModal() {
                 className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-gray-700 bg-gray-800/50 px-3 py-4 text-sm text-gray-500 transition-colors hover:border-gray-500 hover:text-gray-300"
               >
                 <Upload className="h-4 w-4" />
-                上传参考图片
+                Tải ảnh tham chiếu
               </button>
             )}
             <input
@@ -225,7 +225,7 @@ export function CreateProjectModal() {
               className="hidden"
             />
             <p className="mt-1 text-xs text-gray-600">
-              上传后将自动分析风格特征，用于生成一致的画面
+              Sau khi tải lên, hệ thống sẽ tự phân tích đặc trưng phong cách để tạo hình ảnh đồng nhất
             </p>
           </div>
 
@@ -238,10 +238,10 @@ export function CreateProjectModal() {
             {creatingProject ? (
               <span className="inline-flex items-center gap-2">
                 <Loader2 className="h-4 w-4 animate-spin" />
-                创建中...
+                Đang tạo...
               </span>
             ) : (
-              "创建项目"
+              "Tạo dự án"
             )}
           </button>
         </form>

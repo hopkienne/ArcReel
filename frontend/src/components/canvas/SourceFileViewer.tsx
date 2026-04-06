@@ -5,7 +5,7 @@ import { API } from "@/api";
 import { useAppStore } from "@/stores/app-store";
 
 // ---------------------------------------------------------------------------
-// SourceFileViewer — 源文件预览/编辑组件
+// SourceFileViewer — component xem/chinh sua tep nguon
 // ---------------------------------------------------------------------------
 
 interface SourceFileViewerProps {
@@ -60,7 +60,7 @@ export function SourceFileViewer({ projectName, filename }: SourceFileViewerProp
 
   // 删除文件
   const handleDelete = useCallback(async () => {
-    if (!confirm(`确定要删除文件 "${filename}" 吗？此操作不可撤销。`)) return;
+    if (!confirm(`Ban co chac muon xoa tep "${filename}" khong? Thao tac nay khong the hoan tac.`)) return;
     try {
       await API.deleteSourceFile(projectName, filename);
       useAppStore.getState().invalidateSourceFiles();
@@ -73,7 +73,7 @@ export function SourceFileViewer({ projectName, filename }: SourceFileViewerProp
   if (loading) {
     return (
       <div className="flex h-full items-center justify-center text-gray-500">
-        加载文件中...
+        Dang tai tep...
       </div>
     );
   }
@@ -81,7 +81,7 @@ export function SourceFileViewer({ projectName, filename }: SourceFileViewerProp
   if (content === null) {
     return (
       <div className="flex h-full items-center justify-center text-gray-500">
-        无法加载文件 "{filename}"
+        Khong the tai tep "{filename}"
       </div>
     );
   }
@@ -104,7 +104,7 @@ export function SourceFileViewer({ projectName, filename }: SourceFileViewerProp
                 className="flex items-center gap-1 rounded px-2 py-1 text-xs text-green-400 transition-colors hover:bg-gray-800 disabled:opacity-50"
               >
                 <Save className="h-3.5 w-3.5" />
-                {saving ? "保存中..." : "保存"}
+                {saving ? "Dang luu..." : "Luu"}
               </button>
               <button
                 type="button"
@@ -112,7 +112,7 @@ export function SourceFileViewer({ projectName, filename }: SourceFileViewerProp
                 className="flex items-center gap-1 rounded px-2 py-1 text-xs text-gray-400 transition-colors hover:bg-gray-800"
               >
                 <X className="h-3.5 w-3.5" />
-                取消
+                Huy
               </button>
             </>
           ) : (
@@ -123,7 +123,7 @@ export function SourceFileViewer({ projectName, filename }: SourceFileViewerProp
                 className="flex items-center gap-1 rounded px-2 py-1 text-xs text-gray-400 transition-colors hover:bg-gray-800 hover:text-gray-200"
               >
                 <Edit3 className="h-3.5 w-3.5" />
-                编辑
+                Chinh sua
               </button>
               <button
                 type="button"
@@ -131,7 +131,7 @@ export function SourceFileViewer({ projectName, filename }: SourceFileViewerProp
                 className="flex items-center gap-1 rounded px-2 py-1 text-xs text-gray-400 transition-colors hover:bg-gray-800 hover:text-red-400"
               >
                 <Trash2 className="h-3.5 w-3.5" />
-                删除
+                Xoa
               </button>
             </>
           )}
