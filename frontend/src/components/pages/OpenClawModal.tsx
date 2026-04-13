@@ -92,7 +92,7 @@ export function OpenClawModal({ onClose }: OpenClawModalProps) {
           <div className="flex items-center gap-2.5">
             <LobsterIcon className="text-xl leading-none" />
             <div>
-              <h2 className="text-sm font-semibold text-gray-100">OpenClaw 集成指南</h2>
+              <h2 className="text-sm font-semibold text-gray-100">Hướng dẫn tích hợp OpenClaw</h2>
               <h2 className="text-sm font-semibold text-gray-100">Hướng dẫn tích hợp OpenClaw</h2>
               <p className="text-xs text-gray-500">Kết nối ArcReel với tác tử AI OpenClaw</p>
             </div>

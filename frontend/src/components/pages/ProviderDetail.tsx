@@ -96,7 +96,7 @@ function FieldEditor({ field, draft, setDraft }: FieldEditorProps) {
               className="flex items-center gap-1 rounded-lg border border-gray-700 px-3 py-2 text-xs text-gray-400 hover:border-gray-600 hover:text-gray-200 focus-visible:ring-2 focus-visible:ring-indigo-500/60 focus-visible:outline-none"
             >
               <X className="h-3 w-3" />
-              清除
+              Xóa
             </button>
           )}
           {confirmingClear && (
@@ -106,20 +106,20 @@ function FieldEditor({ field, draft, setDraft }: FieldEditorProps) {
                 onClick={handleClear}
                 className="rounded-lg border border-red-800 bg-red-900/30 px-3 py-2 text-xs text-red-400 hover:bg-red-900/50"
               >
-                确认清除
+                Xác nhận xóa
               </button>
               <button
                 type="button"
                 onClick={() => setConfirmingClear(false)}
                 className="rounded-lg border border-gray-700 px-3 py-2 text-xs text-gray-400 hover:border-gray-600 hover:text-gray-200"
               >
-                取消
+                Hủy
               </button>
             </div>
           )}
         </div>
         {field.is_set && !(field.key in draft) && (
-          <p className="mt-1 text-xs text-gray-600">已设置（留空则保留现有值）</p>
+          <p className="mt-1 text-xs text-gray-600">Đã cấu hình (để trống để giữ giá trị hiện tại)</p>
         )}
       </div>
     );
@@ -186,7 +186,7 @@ export function ProviderDetail({ providerId, onSaved }: Props) {
   useWarnUnsaved(hasDraft);
 
   const handleCredentialChanged = useCallback(async () => {
-    // 静默刷新配置（不清除 detail，避免 loading 闪烁和子组件重挂）
+    // Làm mới cấu hình trong nền (không xóa detail để tránh nhấp nháy loading và remount component con)
     const updated = await API.getProviderConfig(providerId);
     setDetail(updated);
     onSaved?.();
@@ -224,7 +224,7 @@ export function ProviderDetail({ providerId, onSaved }: Props) {
     return (
       <div className="flex items-center gap-2 text-sm text-gray-500">
         <Loader2 className="h-4 w-4 animate-spin" />
-        加载中…
+        Đang tải…
       </div>
     );
   }
@@ -270,7 +270,7 @@ export function ProviderDetail({ providerId, onSaved }: Props) {
             <ChevronRight
               className={`h-4 w-4 transition-transform ${showAdvanced ? "rotate-90" : ""}`}
             />
-            高级配置
+            Cấu hình nâng cao
           </button>
           {showAdvanced && (
             <div className="mt-3 space-y-4">
@@ -288,7 +288,7 @@ export function ProviderDetail({ providerId, onSaved }: Props) {
                     {saving ? (
                       <>
                         <Loader2 className="h-4 w-4 animate-spin" />
-                        保存中…
+                        Đang lưu…
                       </>
                     ) : (
                       "Lưu"

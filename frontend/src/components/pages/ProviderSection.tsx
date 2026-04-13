@@ -190,7 +190,7 @@ export function ProviderSection() {
         )}
         {!selection && (
           <div className="flex-1 overflow-y-auto p-6">
-            <div className="text-sm text-gray-500">请选择供应商</div>
+            <div className="text-sm text-gray-500">Vui lòng chọn nhà cung cấp</div>
           </div>
         )}
       </div>

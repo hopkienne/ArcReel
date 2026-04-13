@@ -32,7 +32,7 @@ export function TabSaveFooter({
     >
       <div className="flex items-center gap-3 min-w-0">
         {isDirty && !error && (
-          <span className="text-sm text-gray-400">有未保存的更改</span>
+          <span className="text-sm text-gray-400">Có thay đổi chưa được lưu</span>
         )}
         {error && (
           <span className="text-sm text-rose-400 truncate">{error}</span>
