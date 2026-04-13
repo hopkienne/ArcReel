@@ -115,7 +115,7 @@ export function ProviderSection() {
       <nav aria-label="Danh sách nhà cung cấp" className="w-52 shrink-0 overflow-y-auto border-r border-gray-800 py-3">
         {/* Preset providers */}
         <div className="px-4 pb-2 text-xs uppercase tracking-wide text-gray-500">
-          预置供应商
+          Nhà cung cấp cài sẵn
         </div>
         {providers.map((p) => (
           <button

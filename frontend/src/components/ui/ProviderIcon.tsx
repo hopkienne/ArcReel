@@ -7,7 +7,7 @@ import VolcengineColor from "@lobehub/icons/es/Volcengine/components/Color";
 export const PROVIDER_NAMES: Record<string, string> = {
   "gemini-aistudio": "AI Studio",
   "gemini-vertex": "Vertex AI",
-  ark: "Volcano Ark",
+  ark: "Volcengine Ark",
   grok: "Grok",
   openai: "OpenAI",
 };
