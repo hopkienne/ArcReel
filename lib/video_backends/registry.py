@@ -1,4 +1,4 @@
-"""视频后端注册与工厂。"""
+"""Đăng ký backend video và factory."""
 
 from __future__ import annotations
 
@@ -11,17 +11,17 @@ _BACKEND_FACTORIES: dict[str, Callable[..., VideoBackend]] = {}
 
 
 def register_backend(name: str, factory: Callable[..., VideoBackend]) -> None:
-    """注册一个视频后端工厂函数。"""
+    """Đăng ký một hàm factory backend video."""
     _BACKEND_FACTORIES[name] = factory
 
 
 def create_backend(name: str, **kwargs: Any) -> VideoBackend:
-    """根据名称创建视频后端实例。"""
+    """Tạo instance backend video theo tên."""
     if name not in _BACKEND_FACTORIES:
         raise ValueError(f"Unknown video backend: {name}")
     return _BACKEND_FACTORIES[name](**kwargs)
 
 
 def get_registered_backends() -> list[str]:
-    """返回所有已注册的后端名称。"""
+    """Trả về danh sách tên backend đã đăng ký."""
     return list(_BACKEND_FACTORIES.keys())
