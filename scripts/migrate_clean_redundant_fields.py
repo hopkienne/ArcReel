@@ -1,12 +1,12 @@
 """
-清理现有项目中的冗余字段
+Dọn các trường dư thừa trong dự án hiện có
 
-此脚本用于迁移现有数据，移除已改为读时计算的冗余字段。
-运行前请确保已备份数据。
+Script này dùng để di chuyển dữ liệu hiện có, loại bỏ các trường dư thừa đã chuyển sang tính toán lúc đọc.
+Hãy đảm bảo đã sao lưu dữ liệu trước khi chạy.
 
-用法:
+Cách dùng:
     python scripts/migrate_clean_redundant_fields.py
-    python scripts/migrate_clean_redundant_fields.py --dry-run  # 仅预览不修改
+    python scripts/migrate_clean_redundant_fields.py --dry-run  # Chỉ xem trước, không sửa đổi
 """
 
 import argparse
@@ -16,18 +16,18 @@ from pathlib import Path
 
 def migrate_project(project_dir: Path, dry_run: bool = False) -> dict:
     """
-    清理单个项目的冗余字段
+    Dọn các trường dư thừa của một dự án
 
     Args:
-        project_dir: 项目目录路径
-        dry_run: 是否仅预览不修改
+        project_dir: Đường dẫn thư mục dự án
+        dry_run: Chỉ xem trước, không sửa đổi
 
     Returns:
-        迁移统计信息
+        Thống kê di chuyển
     """
     stats = {"project_cleaned": False, "scripts_cleaned": 0, "fields_removed": []}
 
-    # 清理 project.json
+    # Dọn project.json
     project_file = project_dir / "project.json"
     if project_file.exists():
         with open(project_file, encoding="utf-8") as f:
@@ -35,13 +35,13 @@ def migrate_project(project_dir: Path, dry_run: bool = False) -> dict:
 
         original = json.dumps(project)
 
-        # 移除 status 对象（改为读时计算）
+        # Xóa đối tượng status (đã chuyển sang tính lúc đọc)
         if "status" in project:
             stats["fields_removed"].append("project.json: status")
             if not dry_run:
                 project.pop("status", None)
 
-        # 移除 episodes 中的计算字段
+        # Xóa các trường tính toán trong episodes
         for ep in project.get("episodes", []):
             if "scenes_count" in ep:
                 stats["fields_removed"].append(f"project.json: episodes[{ep.get('episode')}].scenes_count")
@@ -58,7 +58,7 @@ def migrate_project(project_dir: Path, dry_run: bool = False) -> dict:
                 with open(project_file, "w", encoding="utf-8") as f:
                     json.dump(project, f, ensure_ascii=False, indent=2)
 
-    # 清理 scripts/*.json
+    # Dọn scripts/*.json
     scripts_dir = project_dir / "scripts"
     if scripts_dir.exists():
         for script_file in scripts_dir.glob("*.json"):
@@ -68,7 +68,7 @@ def migrate_project(project_dir: Path, dry_run: bool = False) -> dict:
             original = json.dumps(script)
             script_name = script_file.name
 
-            # 移除冗余字段
+            # Xóa trường dư thừa
             if "characters_in_episode" in script:
                 stats["fields_removed"].append(f"{script_name}: characters_in_episode")
                 if not dry_run:
@@ -104,25 +104,25 @@ def migrate_project(project_dir: Path, dry_run: bool = False) -> dict:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="清理项目中的冗余字段")
-    parser.add_argument("--dry-run", action="store_true", help="仅预览不修改")
-    parser.add_argument("--projects-root", default="projects", help="项目根目录")
+    parser = argparse.ArgumentParser(description="Dọn các trường dư thừa trong dự án")
+    parser.add_argument("--dry-run", action="store_true", help="Chỉ xem trước, không sửa đổi")
+    parser.add_argument("--projects-root", default="projects", help="Thư mục gốc dự án")
     args = parser.parse_args()
 
     projects_root = Path(args.projects_root)
 
     if not projects_root.exists():
-        print(f"❌ 项目根目录不存在: {projects_root}")
+        print(f"❌ Thư mục gốc dự án không tồn tại: {projects_root}")
         return
 
     if args.dry_run:
-        print("🔍 预览模式 - 不会修改任何文件\n")
+        print("🔍 Chế độ xem trước - sẽ không sửa bất kỳ tệp nào\n")
 
     total_stats = {"projects_processed": 0, "projects_cleaned": 0, "scripts_cleaned": 0, "fields_removed": []}
 
     for project_dir in projects_root.iterdir():
         if project_dir.is_dir() and not project_dir.name.startswith("."):
-            print(f"处理项目: {project_dir.name}")
+            print(f"Đang xử lý dự án: {project_dir.name}")
             stats = migrate_project(project_dir, args.dry_run)
 
             total_stats["projects_processed"] += 1
@@ -133,18 +133,18 @@ def main():
 
             if stats["fields_removed"]:
                 for field in stats["fields_removed"]:
-                    print(f"  - 移除: {field}")
+                    print(f"  - Đã xóa: {field}")
             else:
-                print("  - 无需清理")
+                print("  - Không cần dọn")
 
-    print(f"\n{'预览' if args.dry_run else '迁移'}完成:")
-    print(f"  - 处理项目: {total_stats['projects_processed']}")
-    print(f"  - 清理项目: {total_stats['projects_cleaned']}")
-    print(f"  - 清理剧本: {total_stats['scripts_cleaned']}")
-    print(f"  - 移除字段: {len(total_stats['fields_removed'])}")
+    print(f"\n{'Xem trước' if args.dry_run else 'Di chuyển'} hoàn tất:")
+    print(f"  - Dự án đã xử lý: {total_stats['projects_processed']}")
+    print(f"  - Dự án đã dọn: {total_stats['projects_cleaned']}")
+    print(f"  - Kịch bản đã dọn: {total_stats['scripts_cleaned']}")
+    print(f"  - Trường đã xóa: {len(total_stats['fields_removed'])}")
 
     if args.dry_run and total_stats["fields_removed"]:
-        print("\n要执行实际迁移，请移除 --dry-run 参数重新运行")
+        print("\nĐể chạy di chuyển thực tế, hãy bỏ tham số --dry-run rồi chạy lại")
 
 
 if __name__ == "__main__":

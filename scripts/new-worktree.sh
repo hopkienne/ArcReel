@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
-# new-worktree.sh — 创建隔离 git worktree 并同步本地环境文件
+# new-worktree.sh — Tạo git worktree tách biệt và đồng bộ tệp môi trường cục bộ
 #
 # Usage: scripts/new-worktree.sh <branch-name> [base-ref]
-#   branch-name: 新 worktree 的本地分支名（也用作目录名）
-#   base-ref:    可选，基于哪个 ref 创建（如 origin/feature/xxx），默认 HEAD
+#   branch-name: tên nhánh cục bộ của worktree mới (đồng thời dùng làm tên thư mục)
+#   base-ref:    tùy chọn, ref gốc để tạo (ví dụ origin/feature/xxx), mặc định HEAD
 
 set -euo pipefail
 
 if [ $# -lt 1 ]; then
   echo "Usage: $0 <branch-name> [base-ref]"
-  echo "  branch-name: worktree 目录名及本地分支名"
-  echo "  base-ref:    基于哪个 ref 创建（默认 HEAD）"
+  echo "  branch-name: tên thư mục worktree và tên nhánh cục bộ"
+  echo "  base-ref:    tạo từ ref nào (mặc định HEAD)"
   exit 1
 fi
 
@@ -19,9 +19,9 @@ BASE_REF="${2:-HEAD}"
 ROOT=$(git rev-parse --show-toplevel)
 TARGET="$ROOT/.worktrees/$BRANCH_NAME"
 
-# --- 创建 worktree ---
+# --- Tạo worktree ---
 if [ -d "$TARGET" ]; then
-  echo "✗ 目录已存在: $TARGET"
+  echo "✗ Thư mục đã tồn tại: $TARGET"
   exit 1
 fi
 
@@ -30,11 +30,11 @@ if [ "$BASE_REF" = "HEAD" ]; then
 else
   git worktree add "$TARGET" --track -b "$BRANCH_NAME" "$BASE_REF"
 fi
-echo "✓ 已创建 worktree: $TARGET"
+echo "✓ Đã tạo worktree: $TARGET"
 
-# --- 同步本地环境文件 ---
+# --- Đồng bộ tệp môi trường cục bộ ---
 echo ""
-echo "同步本地环境文件..."
+echo "Đang đồng bộ tệp môi trường cục bộ..."
 
 # .claude/settings.local.json
 if [ -f "$ROOT/.claude/settings.local.json" ]; then
@@ -42,7 +42,7 @@ if [ -f "$ROOT/.claude/settings.local.json" ]; then
   cp "$ROOT/.claude/settings.local.json" "$TARGET/.claude/settings.local.json"
   echo "  ✓ .claude/settings.local.json"
 else
-  echo "  - .claude/settings.local.json 不存在，已跳过"
+  echo "  - .claude/settings.local.json không tồn tại, đã bỏ qua"
 fi
 
 # .env
@@ -50,17 +50,17 @@ if [ -f "$ROOT/.env" ]; then
   cp "$ROOT/.env" "$TARGET/.env"
   echo "  ✓ .env"
 else
-  echo "  - .env 不存在，已跳过"
+  echo "  - .env không tồn tại, đã bỏ qua"
 fi
 
-# projects/ — 符号链接共享数据
+# projects/ — liên kết tượng trưng để dùng chung dữ liệu
 if [ -d "$ROOT/projects" ]; then
   rm -rf "$TARGET/projects"
   ln -s "$ROOT/projects" "$TARGET/projects"
   git -C "$TARGET" ls-files projects/ | xargs -r git -C "$TARGET" update-index --skip-worktree
-  echo "  ✓ projects/ → $ROOT/projects (符号链接)"
+  echo "  ✓ projects/ → $ROOT/projects (symlink)"
 else
-  echo "  - projects/ 不存在，已跳过"
+  echo "  - projects/ không tồn tại, đã bỏ qua"
 fi
 
 # .vscode/
@@ -68,26 +68,26 @@ if [ -d "$ROOT/.vscode" ]; then
   cp -r "$ROOT/.vscode" "$TARGET/.vscode"
   echo "  ✓ .vscode/"
 else
-  echo "  - .vscode/ 不存在，已跳过"
+  echo "  - .vscode/ không tồn tại, đã bỏ qua"
 fi
 
-# --- 安装依赖 ---
+# --- Cài đặt phụ thuộc ---
 echo ""
-echo "安装项目依赖..."
+echo "Đang cài phụ thuộc dự án..."
 
 if [ -f "$TARGET/pyproject.toml" ]; then
   (cd "$TARGET" && uv sync)
-  echo "  ✓ Python 依赖 (uv sync)"
+  echo "  ✓ Phụ thuộc Python (uv sync)"
 fi
 
 if [ -f "$TARGET/frontend/package.json" ]; then
   (cd "$TARGET/frontend" && pnpm install)
-  echo "  ✓ 前端依赖 (pnpm install)"
+  echo "  ✓ Phụ thuộc frontend (pnpm install)"
 fi
 
-# --- 完成 ---
+# --- Hoàn tất ---
 echo ""
 echo "========================================="
-echo "Worktree 已就绪: $TARGET"
-echo "分支: $BRANCH_NAME"
+echo "Worktree đã sẵn sàng: $TARGET"
+echo "Nhánh: $BRANCH_NAME"
 echo "========================================="
