@@ -120,8 +120,8 @@ async def lifespan(app: FastAPI):
 
 # 创建 FastAPI 应用
 app = FastAPI(
-    title="视频项目管理 WebUI",
-    description="AI 视频生成工作空间的 Web 管理界面",
+    title="WebUI quản lý dự án video",
+    description="Giao diện quản trị web cho không gian tạo video AI",
     version="1.0.0",
     lifespan=lifespan,
 )
