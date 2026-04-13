@@ -1,56 +1,56 @@
-# 从 SQLite 迁移到 PostgreSQL
+# Di chuyển từ SQLite sang PostgreSQL
 
-本文档适用于已使用默认 SQLite 部署 ArcReel、希望切换到 PostgreSQL 的场景。
+Tài liệu này áp dụng cho trường hợp đang chạy ArcReel bằng SQLite mặc định và muốn chuyển sang PostgreSQL.
 
-## 前置条件
+## Điều kiện tiên quyết
 
-- 已安装 Docker 和 Docker Compose
-- ArcReel 当前使用 SQLite 运行（数据库文件位于 `projects/.arcreel.db`）
+- Đã cài Docker và Docker Compose
+- ArcReel hiện đang chạy bằng SQLite (file cơ sở dữ liệu nằm tại `projects/.arcreel.db`)
 
-## 迁移步骤
+## Các bước di chuyển
 
-### 1. 停止 ArcReel 服务
+### 1. Dừng dịch vụ ArcReel
 
 ```bash
-# 如果通过 Docker 运行
+# Nếu chạy bằng Docker
 docker compose down
 
-# 如果通过命令行直接运行，停止 uvicorn 进程
+# Nếu chạy trực tiếp bằng dòng lệnh, dừng tiến trình uvicorn
 ```
 
-### 2. 备份 SQLite 数据库
+### 2. Sao lưu cơ sở dữ liệu SQLite
 
 ```bash
 cp projects/.arcreel.db projects/.arcreel.db.bak
 ```
 
-### 3. 配置环境变量
+### 3. Cấu hình biến môi trường
 
-在 `.env` 中新增以下变量（用于 docker-compose 中 PostgreSQL 容器的初始化）：
+Thêm biến sau vào `.env` (dùng để khởi tạo container PostgreSQL trong docker-compose):
 
 ```env
-POSTGRES_PASSWORD=你的数据库密码
+POSTGRES_PASSWORD=mat_khau_co_so_du_lieu_cua_ban
 ```
 
-> `DATABASE_URL` 无需手动设置，已在 `docker-compose.yml` 中通过 `POSTGRES_PASSWORD` 自动拼接。
+> Không cần đặt thủ công `DATABASE_URL`; giá trị đã được ghép tự động trong `docker-compose.yml` từ `POSTGRES_PASSWORD`.
 
-### 4. 启动 PostgreSQL
+### 4. Khởi động PostgreSQL
 
-先只启动数据库服务：
+Trước tiên chỉ khởi động dịch vụ cơ sở dữ liệu:
 
 ```bash
 docker compose up -d postgres
 ```
 
-等待健康检查通过：
+Đợi healthcheck thành công:
 
 ```bash
-docker compose ps  # 确认 postgres 状态为 healthy
+docker compose ps  # Xác nhận trạng thái postgres là healthy
 ```
 
-### 5. 迁移数据
+### 5. Di chuyển dữ liệu
 
-在 ArcReel 容器内使用 pgloader 将 SQLite 数据直接迁移到 PostgreSQL：
+Dùng pgloader trong container ArcReel để chuyển trực tiếp dữ liệu từ SQLite sang PostgreSQL:
 
 ```bash
 docker compose run --rm arcreel bash -c "
@@ -60,10 +60,10 @@ docker compose run --rm arcreel bash -c "
 "
 ```
 
-> pgloader 会自动处理 SQLite 与 PostgreSQL 之间的类型和语法差异（布尔值、时间格式等），
-> 并跳过已存在的表结构，只导入数据。
+> pgloader sẽ tự xử lý khác biệt kiểu dữ liệu và cú pháp giữa SQLite và PostgreSQL (boolean, định dạng thời gian, ...),
+> đồng thời bỏ qua schema đã tồn tại và chỉ nhập dữ liệu.
 
-### 6. 验证数据
+### 6. Xác minh dữ liệu
 
 ```bash
 docker compose exec postgres psql -U arcreel -d arcreel -c "
@@ -77,7 +77,7 @@ docker compose exec postgres psql -U arcreel -d arcreel -c "
 "
 ```
 
-对比 SQLite 中的记录数：
+Đối chiếu số bản ghi trong SQLite:
 
 ```bash
 sqlite3 projects/.arcreel.db "
@@ -91,20 +91,20 @@ sqlite3 projects/.arcreel.db "
 "
 ```
 
-### 7. 启动完整服务
+### 7. Khởi động toàn bộ dịch vụ
 
 ```bash
 docker compose up -d
 ```
 
-访问 `http://<你的IP>:1241` 验证服务正常。
+Truy cập `http://<IP_cua_ban>:1241` để xác nhận dịch vụ hoạt động bình thường。
 
 ---
 
-## 回滚到 SQLite
+## Quay lui về SQLite
 
-如果需要回退：
+Nếu cần quay lui:
 
-1. 停止服务：`docker compose down`
-2. 恢复备份：`cp projects/.arcreel.db.bak projects/.arcreel.db`
-3. 移除 `.env` 中的 `POSTGRES_PASSWORD`，不使用 `docker-compose.yml` 中的 PostgreSQL 配置启动
+1. Dừng dịch vụ: `docker compose down`
+2. Khôi phục bản sao lưu: `cp projects/.arcreel.db.bak projects/.arcreel.db`
+3. Xóa `POSTGRES_PASSWORD` trong `.env` và khởi động mà không dùng cấu hình PostgreSQL trong `docker-compose.yml`
