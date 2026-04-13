@@ -97,7 +97,7 @@ sqlite3 projects/.arcreel.db "
 docker compose up -d
 ```
 
-Truy cập `http://<IP_cua_ban>:1241` để xác nhận dịch vụ hoạt động bình thường。
+Truy cập `http://<IP_cua_ban>:1241` để xác nhận dịch vụ hoạt động bình thường.
 
 ---
 
