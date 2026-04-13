@@ -459,7 +459,7 @@ export function useAssistantSession(projectName: string | null) {
           const newSession: SessionMeta = {
             id: returnedSessionId,
             project_name: projectName!,
-            title: content.trim().slice(0, 30) || "图片消息",
+            title: content.trim().slice(0, 30) || "Tin nhắn hình ảnh",
             status: "running",
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
@@ -475,7 +475,7 @@ export function useAssistantSession(projectName: string | null) {
         connectStream(sessionId);
       } catch (err) {
         if (pendingSendVersionRef.current !== sendVersion) return;
-        store.getState().setError((err as Error).message ?? "发送失败");
+        store.getState().setError((err as Error).message ?? "Gửi thất bại");
         if (sessionId && optimisticUuid) {
           restoreFailedSend(sessionId, optimisticUuid, previousStatus);
         } else {
@@ -504,7 +504,7 @@ export function useAssistantSession(projectName: string | null) {
         await API.answerAssistantQuestion(projectName, sessionId, questionId, answers);
         store.getState().setPendingQuestion(null);
       } catch (err) {
-        store.getState().setError((err as Error).message ?? "回答失败");
+        store.getState().setError((err as Error).message ?? "Trả lời thất bại");
       } finally {
         store.getState().setAnsweringQuestion(false);
       }
@@ -521,7 +521,7 @@ export function useAssistantSession(projectName: string | null) {
     try {
       await API.interruptAssistantSession(projectName, sessionId);
     } catch (err) {
-      store.getState().setError((err as Error).message ?? "中断失败");
+      store.getState().setError((err as Error).message ?? "Ngắt thất bại");
       store.getState().setInterrupting(false);
     }
   }, [projectName, store]);

@@ -50,7 +50,7 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """应用生命周期管理"""
+    """Quản lý vòng đời ứng dụng"""
     # Startup
     ensure_auth_password()
 
@@ -84,37 +84,37 @@ async def lifespan(app: FastAPI):
     _pm = ProjectManager(PROJECT_ROOT / "projects")
     _symlink_stats = _pm.repair_all_symlinks()
     if any(v > 0 for v in _symlink_stats.values()):
-        logger.info("agent_runtime 软连接修复完成: %s", _symlink_stats)
+        logger.info("Đã sửa xong symlink agent_runtime: %s", _symlink_stats)
 
     # Initialize async services
     await assistant.assistant_service.startup()
     assistant.assistant_service.session_manager.start_patrol()
 
-    logger.info("启动 GenerationWorker...")
+    logger.info("Khởi động GenerationWorker...")
     worker = create_generation_worker()
     app.state.generation_worker = worker
     await worker.start()
-    logger.info("GenerationWorker 已启动")
+    logger.info("GenerationWorker đã khởi động")
 
-    logger.info("启动 ProjectEventService...")
+    logger.info("Khởi động ProjectEventService...")
     project_event_service = ProjectEventService(PROJECT_ROOT)
     app.state.project_event_service = project_event_service
     await project_event_service.start()
-    logger.info("ProjectEventService 已启动")
+    logger.info("ProjectEventService đã khởi động")
 
     yield
 
     # Shutdown
     project_event_service = getattr(app.state, "project_event_service", None)
     if project_event_service:
-        logger.info("正在停止 ProjectEventService...")
+        logger.info("Đang dừng ProjectEventService...")
         await project_event_service.shutdown()
-        logger.info("ProjectEventService 已停止")
+        logger.info("ProjectEventService đã dừng")
     worker = getattr(app.state, "generation_worker", None)
     if worker:
-        logger.info("正在停止 GenerationWorker...")
+        logger.info("Đang dừng GenerationWorker...")
         await worker.stop()
-        logger.info("GenerationWorker 已停止")
+        logger.info("GenerationWorker đã dừng")
     await close_db()
 
 
@@ -166,23 +166,23 @@ async def request_logging_middleware(request: Request, call_next):
 
 
 # 注册 API 路由
-app.include_router(auth_router.router, prefix="/api/v1", tags=["认证"])
-app.include_router(projects.router, prefix="/api/v1", tags=["项目管理"])
-app.include_router(characters.router, prefix="/api/v1", tags=["角色管理"])
-app.include_router(clues.router, prefix="/api/v1", tags=["线索管理"])
-app.include_router(files.router, prefix="/api/v1", tags=["文件管理"])
-app.include_router(generate.router, prefix="/api/v1", tags=["生成"])
-app.include_router(versions.router, prefix="/api/v1", tags=["版本管理"])
-app.include_router(usage.router, prefix="/api/v1", tags=["费用统计"])
-app.include_router(assistant.router, prefix="/api/v1/projects/{project_name}/assistant", tags=["助手会话"])
-app.include_router(tasks.router, prefix="/api/v1", tags=["任务队列"])
-app.include_router(project_events.router, prefix="/api/v1", tags=["项目变更流"])
-app.include_router(providers.router, prefix="/api/v1", tags=["供应商管理"])
-app.include_router(system_config.router, prefix="/api/v1", tags=["系统配置"])
-app.include_router(api_keys.router, prefix="/api/v1", tags=["API Key 管理"])
-app.include_router(agent_chat.router, prefix="/api/v1", tags=["Agent 对话"])
-app.include_router(custom_providers.router, prefix="/api/v1", tags=["自定义供应商"])
-app.include_router(cost_estimation.router, prefix="/api/v1", tags=["费用估算"])
+app.include_router(auth_router.router, prefix="/api/v1", tags=["Xác thực"])
+app.include_router(projects.router, prefix="/api/v1", tags=["Quản lý dự án"])
+app.include_router(characters.router, prefix="/api/v1", tags=["Quản lý nhân vật"])
+app.include_router(clues.router, prefix="/api/v1", tags=["Quản lý manh mối"])
+app.include_router(files.router, prefix="/api/v1", tags=["Quản lý tệp"])
+app.include_router(generate.router, prefix="/api/v1", tags=["Tạo nội dung"])
+app.include_router(versions.router, prefix="/api/v1", tags=["Quản lý phiên bản"])
+app.include_router(usage.router, prefix="/api/v1", tags=["Thống kê chi phí"])
+app.include_router(assistant.router, prefix="/api/v1/projects/{project_name}/assistant", tags=["Phiên trợ lý"])
+app.include_router(tasks.router, prefix="/api/v1", tags=["Hàng đợi tác vụ"])
+app.include_router(project_events.router, prefix="/api/v1", tags=["Luồng thay đổi dự án"])
+app.include_router(providers.router, prefix="/api/v1", tags=["Quản lý nhà cung cấp"])
+app.include_router(system_config.router, prefix="/api/v1", tags=["Cấu hình hệ thống"])
+app.include_router(api_keys.router, prefix="/api/v1", tags=["Quản lý API Key"])
+app.include_router(agent_chat.router, prefix="/api/v1", tags=["Trò chuyện Agent"])
+app.include_router(custom_providers.router, prefix="/api/v1", tags=["Nhà cung cấp tùy chỉnh"])
+app.include_router(cost_estimation.router, prefix="/api/v1", tags=["Ước tính chi phí"])
 
 
 def create_generation_worker() -> GenerationWorker:
@@ -191,18 +191,18 @@ def create_generation_worker() -> GenerationWorker:
 
 @app.get("/health")
 async def health_check():
-    """健康检查"""
-    return {"status": "ok", "message": "视频项目管理 WebUI 运行正常"}
+    """Kiểm tra tình trạng"""
+    return {"status": "ok", "message": "WebUI quản lý dự án video đang hoạt động bình thường"}
 
 
 @app.get("/skill.md", include_in_schema=False)
 async def serve_skill_md(request: Request) -> Response:
-    """动态渲染 skill.md 模板，将 {{BASE_URL}} 替换为实际服务地址（无需认证）。"""
+    """Render động template skill.md, thay {{BASE_URL}} bằng địa chỉ dịch vụ thực tế (không cần xác thực)."""
     from starlette.responses import PlainTextResponse
 
     template_path = PROJECT_ROOT / "public" / "skill.md.template"
     if not template_path.exists():
-        return PlainTextResponse("skill.md 模板不存在", status_code=404)
+        return PlainTextResponse("Không tìm thấy mẫu skill.md", status_code=404)
 
     template = template_path.read_text(encoding="utf-8")
 
@@ -222,7 +222,7 @@ frontend_dist_dir = PROJECT_ROOT / "frontend" / "dist"
 
 
 class SPAStaticFiles(StaticFiles):
-    """服务 Vite 构建产物，未匹配的路径回退到 index.html（SPA 路由）。"""
+    """Phục vụ bản build Vite; đường dẫn không khớp sẽ fallback về index.html (SPA routing)."""
 
     async def get_response(self, path: str, scope):
         try:

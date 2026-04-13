@@ -165,7 +165,7 @@ export function useProjectEventsSSE(projectName?: string | null): void {
       const res = await API.getProject(projectName);
       setCurrentProject(projectName, res.project, res.scripts ?? {}, res.asset_fingerprints);
     } catch (err) {
-      pushToast(`同步项目变更失败: ${(err as Error).message}`, "warning");
+      pushToast(`Đồng bộ thay đổi dự án thất bại: ${(err as Error).message}`, "warning");
     } finally {
       refreshingRef.current = false;
       if (needsRefreshRef.current) {

@@ -64,7 +64,7 @@ export function TabSaveFooter({
           ) : (
             <Save className="h-4 w-4" />
           )}
-          {saving ? "保存中…" : "保存"}
+          {saving ? "Đang lưu…" : "Lưu"}
         </button>
       </div>
     </div>

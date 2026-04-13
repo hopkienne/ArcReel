@@ -14,9 +14,9 @@ import { CustomProviderForm } from "./settings/CustomProviderForm";
 // ---------------------------------------------------------------------------
 
 const STATUS_MAP: Record<string, { color: string; label: string }> = {
-  ready: { color: "bg-green-400", label: "已就绪" },
-  error: { color: "bg-yellow-400", label: "异常" },
-  unconfigured: { color: "bg-gray-500", label: "未配置" },
+  ready: { color: "bg-green-400", label: "Sẵn sàng" },
+  error: { color: "bg-yellow-400", label: "Lỗi" },
+  unconfigured: { color: "bg-gray-500", label: "Chưa cấu hình" },
 };
 
 function StatusDot({ status }: { status: string }) {
@@ -112,7 +112,7 @@ export function ProviderSection() {
   return (
     <div className="flex h-full">
       {/* Provider list sidebar */}
-      <nav aria-label="供应商列表" className="w-52 shrink-0 overflow-y-auto border-r border-gray-800 py-3">
+      <nav aria-label="Danh sách nhà cung cấp" className="w-52 shrink-0 overflow-y-auto border-r border-gray-800 py-3">
         {/* Preset providers */}
         <div className="px-4 pb-2 text-xs uppercase tracking-wide text-gray-500">
           预置供应商
